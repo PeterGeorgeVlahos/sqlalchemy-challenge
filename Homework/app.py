@@ -103,7 +103,6 @@ def temperature():
     results = session.query(measurement.date, measurement.tobs).filter(measurement.station == 'USC00519281').filter(measurement.date > '2016-08-22').order_by(measurement.date).all()
 
     session.close()
-
     # Convert list of tuples into normal list
      # Convert list of tuples into dict
     dates_temps_all = []
@@ -128,8 +127,24 @@ def start_calc_temps(start_date):
         TMIN, TAVE, and TMAX
     """
     
-    return session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
+    session = Session(engine)
+    results = session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
         filter(measurement.date >= start_date).all()
+
+    return print(start_calc_temps(search_term))
+
+@app.route("/api/v1.0/<start>/<end>")
+def calc_temps(start_date, end_date):
+
+    """TMIN, TAVG, and TMAX for a list of dates.
+    Args:
+        start_date (string): A date string in the format %Y-%m-%d
+        end_date (string): A date string in the format %Y-%m-%d
+    Returns:
+        TMIN, TAVE, and TMAX
+    """
+    return session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
+        filter(measurement.date >= start_date).filter(measurement.date <= end_date).all()
 
 
 # 4. Define main behavior
