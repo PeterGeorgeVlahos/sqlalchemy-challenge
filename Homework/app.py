@@ -38,17 +38,17 @@ def index():
     """List all available api routes."""
     return (
         f"Hello and welcome to my Hawaiin Vacation Home Page!<br/>"
-        f"Here you will be able to inspect the past the weather in <br/> "
-        f"Honolulu, Hawaii and decide which days are best to visit<br/>"
-        f"Safe Travels<br/>"
+        f"Here you will be able to inspect the past weather in <br/> "
+        f"Honolulu, Hawaii and decide which days are best to visit.<br/>"
+        f"Safe Travels.<br/>"
         f"<br/>"
         f"Use the following Routes to inspect weather measurements:<br/>"
         f"<br/>"                   
         f"/api/v1.0/precipitation <br/>"     
         f"/api/v1.0/stations <br/>"
         f"/api/v1.0/tobs <br/>"
-        f"/api/v1.0/<start> <br/>"
-        f"/api/v1.0/<start>/<end> <br/>"
+        f"/api/v1.0/start_date/<start_date> <br/>"
+        f"/api/v1.0/start_date/end_date/<start_date> <end_date><br/>"
     )
 # Convert the query results to a dictionary using `date` as the key and `prcp` as the value.
 # Return the JSON representation of your dictionary.
@@ -117,7 +117,10 @@ def temperature():
 # Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.
 # When given the start only, calculate `TMIN`, `TAVG`, and `TMAX` for all dates greater than and equal to the start date.
 # When given the start and the end date, calculate the `TMIN`, `TAVG`, and `TMAX` for dates between the start and end date inclusive.
-@app.route("/api/v1.0/<start>")
+
+
+import datetime
+@app.route("/api/v1.0/start_date/<start_date>")
 def start_calc_temps(start_date):
     """TMIN, TAVG, and TMAX for a list of dates.
     Args:
@@ -126,25 +129,39 @@ def start_calc_temps(start_date):
     Returns:
         TMIN, TAVE, and TMAX
     """
+
+    """ End point is YYYY-mm-dd = search_term = convert to string with datetime.datetime = start_date """
+    # t = datetime.datetime(start_date)
+    # start_date = t.strftime('%Y-%m-%d')
     
     session = Session(engine)
-    results = session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
-        filter(measurement.date >= start_date).all()
-
-    return print(start_calc_temps(search_term))
-
-@app.route("/api/v1.0/<start>/<end>")
-def calc_temps(start_date, end_date):
-
-    """TMIN, TAVG, and TMAX for a list of dates.
-    Args:
-        start_date (string): A date string in the format %Y-%m-%d
-        end_date (string): A date string in the format %Y-%m-%d
-    Returns:
-        TMIN, TAVE, and TMAX
-    """
     return session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
-        filter(measurement.date >= start_date).filter(measurement.date <= end_date).all()
+        filter(measurement.date >= start_date).all()
+    
+    return jsonify({"error": f"The Date entered for /api/v1.0/<start> {start_date} not found."}), 404
+
+    print(start_calc_temps(start_date))
+                # f'The minimum temperature from {start_date} you choose is {start_calc_temps(start_date)[0]}.<br/>'
+                # f'The average temperature is {start_calc_temps(start_date)[1]}.<br/>'
+                # f'The maximum temperature is {start_calc_temps(start_date)[2]}.'
+                # )
+
+    
+
+# @app.route("/api/v1.0/<start>/<end>")
+# def calc_temps(start_date, end_date):
+
+#     """TMIN, TAVG, and TMAX for a list of dates.
+#     Args:
+#         start_date (string): A date string in the format %Y-%m-%d
+#         end_date (string): A date string in the format %Y-%m-%d
+#     Returns:
+#         TMIN, TAVE, and TMAX
+#     """
+#     return session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
+#         filter(measurement.date >= start_date).filter(measurement.date <= end_date).all()
+
+#     return jsonify({"error": f"The Date entered for /api/v1.0/<start>/<end> {<start>/<end>} not found."}), 404
 
 
 # 4. Define main behavior
