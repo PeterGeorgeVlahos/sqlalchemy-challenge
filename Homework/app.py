@@ -131,16 +131,16 @@ def start_calc_temps(start_date):
     """
 
     """ End point is YYYY-mm-dd = search_term = convert to string with datetime.datetime = start_date """
-    # t = datetime.datetime(start_date)
-    # start_date = t.strftime('%Y-%m-%d')
+    t = datetime.datetime(start_date)
+    start_date = t.strftime('%Y-%m-%d')
     
     session = Session(engine)
-    return session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
+    session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
         filter(measurement.date >= start_date).all()
     
-    return jsonify({"error": f"The Date entered for /api/v1.0/<start> {start_date} not found."}), 404
+    '''return jsonify({"error": f"The Date entered for /api/v1.0/<start> {start_date} not found."}), 404'''
 
-    print(start_calc_temps(start_date))
+    return jsonify(start_calc_temps(start_date))
                 # f'The minimum temperature from {start_date} you choose is {start_calc_temps(start_date)[0]}.<br/>'
                 # f'The average temperature is {start_calc_temps(start_date)[1]}.<br/>'
                 # f'The maximum temperature is {start_calc_temps(start_date)[2]}.'
