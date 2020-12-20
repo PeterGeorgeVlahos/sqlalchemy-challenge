@@ -135,33 +135,32 @@ def start_calc_temps(start_date):
     # start_date = t.strftime('%Y-%m-%d')
     
     session = Session(engine)
-    session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
+    results= session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
         filter(measurement.date >= start_date).all()
     
-    '''return jsonify({"error": f"The Date entered for /api/v1.0/<start> {start_date} not found."}), 404'''
+    '''return jsonify({"error": f"The Date entered for /api/v1.0/start_date/ {start_date} not found."}), 404'''
 
-    return jsonify(start_calc_temps(start_date))
-                # f'The minimum temperature from {start_date} you choose is {start_calc_temps(start_date)[0]}.<br/>'
-                # f'The average temperature is {start_calc_temps(start_date)[1]}.<br/>'
-                # f'The maximum temperature is {start_calc_temps(start_date)[2]}.'
-                # )
+    return jsonify(results)
 
     
 
-# @app.route("/api/v1.0/<start>/<end>")
-# def calc_temps(start_date, end_date):
+@app.route("/api/v1.0/start_date/end_date/<start_date>,<end_date>")
+def start_end_calc_temps(start_date, end_date):
+    """TMIN, TAVG, and TMAX for a list of dates.
+    Args:
+        start_date (string): A date string in the format %Y-%m-%d
+        end_date (string): A date string in the format %Y-%m-%d    
+    Returns:
+        TMIN, TAVE, and TMAX
+    """
+    
+    session = Session(engine)
+    results= session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
+        filter(measurement.date >= start_date).filter(measurement.date <= end_date).all()
+    
+    '''return jsonify({"error": f"The Date entered for /api/v1.0/start_date/ {start_date} not found."}), 404'''
 
-#     """TMIN, TAVG, and TMAX for a list of dates.
-#     Args:
-#         start_date (string): A date string in the format %Y-%m-%d
-#         end_date (string): A date string in the format %Y-%m-%d
-#     Returns:
-#         TMIN, TAVE, and TMAX
-#     """
-#     return session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
-#         filter(measurement.date >= start_date).filter(measurement.date <= end_date).all()
-
-#     return jsonify({"error": f"The Date entered for /api/v1.0/<start>/<end> {<start>/<end>} not found."}), 404
+    return jsonify(results)
 
 
 # 4. Define main behavior
