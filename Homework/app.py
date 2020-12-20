@@ -131,8 +131,8 @@ def start_calc_temps(start_date):
     """
 
     """ End point is YYYY-mm-dd = search_term = convert to string with datetime.datetime = start_date """
-    t = datetime.datetime(start_date)
-    start_date = t.strftime('%Y-%m-%d')
+    # t = datetime.datetime(start_date)
+    # start_date = t.strftime('%Y-%m-%d')
     
     session = Session(engine)
     session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).\
